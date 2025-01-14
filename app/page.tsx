@@ -26,7 +26,6 @@ export default function Home() {
   return (
     <div className=''>
       <h1 className='p-5'>My First Three.js Scene with Next.js</h1>
-
       <ThreeScene />
     </div>
   );
