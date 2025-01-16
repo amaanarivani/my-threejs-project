@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const ThreeScene = () => {
+const ThreeCursorCube = () => {
     const mountRef: any = useRef(null);
 
     useEffect(() => {
@@ -18,34 +18,37 @@ const ThreeScene = () => {
         mountRef.current.appendChild(renderer.domElement);
 
         // Cube setup
-        // const geometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
-        const geometry = new THREE.TorusGeometry(1, 0.4, 16, 100);
-        // const geometry = new THREE.BufferGeometry();
-        // const vertices = new Float32Array([
-        //     -2.0, -2.0, 1.0, // Vertex 1
-        //     1.0, -1.0, 1.0, // Vertex 2
-        //     1.0, 1.0, 1.0, // Vertex 3
-        //     -1.0, 1.0, 1.0, // Vertex 4
-        //     // ... more vertices
-        // ]);
-        // geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        const geometry = new THREE.BoxGeometry();
         const material = new THREE.MeshBasicMaterial({ color: "#6969D7" });
-        const cylinder = new THREE.Mesh(geometry, material);
-        scene.add(cylinder);
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
 
-        camera.position.z = 5;
+        camera.position.z = 3;
+
+        let mouseX = 0;
+        let mouseY = 0;
+        const onMouseMove = (event: any) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        };
+
+        window.addEventListener('mousemove', onMouseMove);
 
         // Animation loop
         const animate = () => {
             requestAnimationFrame(animate);
-            cylinder.rotation.x += 0.02;
-            cylinder.rotation.y += 0.02;
+
+            // Rotate cube based on mouse position
+            cube.rotation.x = mouseY * Math.PI;
+            cube.rotation.y = mouseX * Math.PI;
+
             renderer.render(scene, camera);
         };
         animate();
 
         // Cleanup on component unmount
         return () => {
+            window.removeEventListener('mousemove', onMouseMove);
             mountRef.current.removeChild(renderer.domElement);
         };
     }, []);
@@ -53,4 +56,4 @@ const ThreeScene = () => {
     return <div ref={mountRef} />;
 };
 
-export default ThreeScene;
+export default ThreeCursorCube;
